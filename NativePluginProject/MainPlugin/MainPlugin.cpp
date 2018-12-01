@@ -12,14 +12,9 @@ extern "C" {
 
 ComPtr<ID3D11Device> g_device = nullptr;
 
-int32_t UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API Sum(int32_t a, int32_t b)
+void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API FillTexture(IUnknown *unityTexture, float x, float y, float z, float w)
 {
-	return a + b;
-}
-
-void UNITY_INTERFACE_API FillTexture(IUnknown *unityTexture, float x, float y, float z, float w)
-{
-	if (g_device == nullptr || unityTexture != nullptr)
+	if (g_device == nullptr || unityTexture == nullptr)
 	{
 		return;
 	}
@@ -33,7 +28,7 @@ void UNITY_INTERFACE_API FillTexture(IUnknown *unityTexture, float x, float y, f
 	}
 
 	g_device->GetImmediateContext(&dc);
-	if (FAILED(g_device->CreateRenderTargetView(texture, &CD3D11_RENDER_TARGET_VIEW_DESC(D3D11_RTV_DIMENSION_TEXTURE2D), &rtv)))
+	if (FAILED(g_device->CreateRenderTargetView(texture, &CD3D11_RENDER_TARGET_VIEW_DESC(D3D11_RTV_DIMENSION_TEXTURE2D, DXGI_FORMAT_R8G8B8A8_UNORM), &rtv)))
 	{
 		return;
 	}
