@@ -1,10 +1,19 @@
-﻿using System.Collections;
+﻿#define USE_DYNAMICLOADER
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
 
 public class NativePluginImporter : MonoBehaviour
 {
+#if !USE_DYNAMICLOADER
+
+	[DllImport("MainPlugin")]
+	public static extern void FillTexture(System.IntPtr unityTexture, float x, float y, float z, float w);
+
+#else
+
 	public static void FillTexture(System.IntPtr unityTexture, float x, float y, float z, float w)
 	{
 		_funcFillTexture?.Invoke(unityTexture, x, y, z, w);
@@ -30,4 +39,6 @@ public class NativePluginImporter : MonoBehaviour
 		_dll = null;
 		_funcFillTexture = null;
 	}
+
+#endif
 }
