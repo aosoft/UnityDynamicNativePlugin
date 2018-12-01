@@ -14,17 +14,27 @@ ComPtr<ID3D11Device> g_device = nullptr;
 
 void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API FillTexture(IUnknown *unityTexture, float x, float y, float z, float w)
 {
-	if (g_device == nullptr || unityTexture == nullptr)
+	ComPtr<ID3D11DeviceContext> dc;
+	ComPtr<ID3D11Texture2D> texture;
+	ComPtr<ID3D11RenderTargetView> rtv;
+
+	if (unityTexture == nullptr)
 	{
 		return;
 	}
 
-	ComPtr<ID3D11DeviceContext> dc;
-	ComPtr<ID3D11Texture2D> texture;
-	ComPtr<ID3D11RenderTargetView> rtv;
 	if (FAILED(unityTexture->QueryInterface(&texture)))
 	{
 		return;
+	}
+
+	if (g_device == nullptr)
+	{
+		texture->GetDevice(&g_device);
+		if (g_device == nullptr)
+		{
+			return;
+		}
 	}
 
 	g_device->GetImmediateContext(&dc);

@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define DO_NOT_CALL_UNITYPLUGINLOAD
+
+using System;
 using System.Runtime.InteropServices;
 
 public class DllManager : IDisposable
@@ -12,17 +14,21 @@ public class DllManager : IDisposable
 	{
 		_dll = LoadLibrary(dllpath);
 
+#if !DO_NOT_CALL_UNITYPLUGINLOAD
 		if (_dll != IntPtr.Zero)
 		{
 			GetDelegate<FnUnityPluginLoad>("UnityPluginLoad")?.Invoke(GetUnityInterface());
 		}
+#endif
 	}
 
 	public void Dispose()
 	{
 		if (_dll != IntPtr.Zero)
 		{
+#if !DO_NOT_CALL_UNITYPLUGINLOAD
 			GetDelegate<FnUnityPluginUnload>("UnityPluginUnload")?.Invoke();
+#endif
 			FreeLibrary(_dll);
 			_dll = IntPtr.Zero;
 		}
